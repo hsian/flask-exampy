@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+	{% import "bootstrap/wtf.html" as wtf %}
+	<div class="page-header">
+	    <h1>Login</h1>
+	</div>
+
+	{{ wtf.quick_form(form) }}
+
+</body>
+</html>
