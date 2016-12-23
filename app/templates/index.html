@@ -8,5 +8,9 @@
 	
 	hello word
 
+	{% if current_user.is_administrator() %}
+        <p><a href="#">{{ current_user.username }}</a></p>
+    {% endif %}
+
 </body>
 </html>

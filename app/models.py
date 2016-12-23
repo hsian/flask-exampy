@@ -7,6 +7,8 @@ from flask import current_app, request, url_for
 from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
 
+
+
 class Permission:
     #FOLLOW = 0x01
     COMMENT = 0x02
@@ -95,5 +97,15 @@ class User(UserMixin, db.Model):
         db.session.add(user)
         db.session.commit()
 
+    def change_inline(self):
+        self.inline = 1;
+        db.session.add(self)
+        return True
+
     def __repr__(self):
         return '<User %r>' % self.username
+
+# must add user_loader
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
