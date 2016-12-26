@@ -5,17 +5,26 @@ from . import auth
 from .. import db
 from ..models import User
 from .forms import LoginForm
+import socket
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
 	form = LoginForm()
+	isEqual = 1
+
+	## get local ip
+	localIP = socket.gethostbyname(socket.gethostname())
+
 	if form.validate_on_submit():
 		user = User.query.filter_by(username=form.username.data).first()
 		if user is not None and user.verify_password(form.password.data):
-			login_user(user, form.remember_me.data)
 
-			User.change_inline(user)
-
-			return redirect(url_for('main.index'))
-		flash('Invalid username or password.')
-	return render_template('auth/login.html', form=form)
+			if user.local_ip is None and User.set_local_ip(user,localIP) or \
+				localIP == user.local_ip:
+				login_user(user, form.remember_me.data)
+				return redirect(url_for('main.index'))
+			elif localIP != user.local_ip:
+				isEqual = 0
+		else:	
+			flash('Invalid username or password.')	
+	return render_template('auth/login.html', form=form,isEqual=isEqual)

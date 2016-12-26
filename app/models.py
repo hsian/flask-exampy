@@ -51,6 +51,7 @@ class User(UserMixin, db.Model):
     confirmed = db.Column(db.Boolean, default=False)
     #posts = db.relationship('Post', backref='author', lazy='dynamic')
     inline = db.Column(db.Boolean, default=False)
+    local_ip = db.Column(db.String(64), unique=True, index=True)
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -97,8 +98,8 @@ class User(UserMixin, db.Model):
         db.session.add(user)
         db.session.commit()
 
-    def change_inline(self):
-        self.inline = 1;
+    def set_local_ip(self,ip):
+        self.local_ip = ip;
         db.session.add(self)
         return True
 
@@ -109,3 +110,22 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+class Select(db.Model):
+    __tablename__ = 'selects'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(256), unique=True)
+    option = db.Column(db.String(256), unique=True)
+    answer = db.Column(db.String(64), unique=True)
+    period = db.Column(db.Integer, default=255)
+    edited_time = db.Column(db.DateTime(), default=datetime.utcnow)
+
+
+    def __repr__(self):
+        return '<Select %r>' % self.title
+
+
+
+
+
+
