@@ -34,6 +34,14 @@
 		.subject-item input{
 			width: 300px;
 		}
+
+		.option-list input{
+			margin-top: 10px;
+		}
+
+		.option-list-item label{
+			margin-right: 5px;
+		}
 	</style>
 </head>
 <body>
@@ -43,6 +51,7 @@
 			<option></option>
 			<option>创建新一期</option>
 		</select>
+		<span id="current_period"></span>
 	</div>
 	<div class="tool-bar">
 		添加: <button id="select">选择题</button> <button id="answer">问答题</button>
@@ -58,7 +67,10 @@
 				<label>标题: </label>
 				<textarea></textarea>
 			</div>
-			<button id="add-option" class="mt">添加选项</button>
+			<button class="add-option mt">添加选项</button>
+			<div class="option-list">
+				
+			</div>
 			<div class="answer-item mt">
 				<label>答案: </label>
 				<input type="text" name="answer">
@@ -73,30 +85,57 @@
 		$(function(){
 
 			$("#select").on("click",function(){
-				
 				subject.add();
-			});
-
-			
+			});	
 
 			var subject = {
 
 				wrap : $(".subject-list"),
 
+				optIndex : 0,
+
 				add : function(){
 					var html = template("static-opt",{});
 					this.wrap[0].insertAdjacentHTML("beforeend",html);
 					
+					var last = $(".add-option:last");
+					var option = new Option();
+
+					last.click(function(){
+						subject.addOption(this,option);
+					})					
 				},
 
-				addOption : function(obj){
-
+				addOption : function(element,option){
+					var item = option.create();
+					$(element).next().append(item);
 				}
 
 			}
 
+			//global
+
+			var ABC = "ABCDEFGHIJK";
+
+			// 选项构造函数
+
 			function Option(){
-				this.index = 1;
+				this.index = 0;
+			}
+
+			Option.prototype.create = function(){
+				var div = document.createElement("div");
+				var input = document.createElement("input");
+				var label = document.createElement("label");
+				var current = ABC.charAt(this.index++);
+
+				div.className = "option-list-item";
+				label.innerHTML = current + ":";
+
+				div.appendChild(label);
+				div.appendChild(input);
+		
+				return div;
 			}
 
 		})
