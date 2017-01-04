@@ -48,9 +48,9 @@
 
 	<div>
 		<select id="period">
-			<option></option>
-			<option>创建新一期</option>
+			<option>选择期数</option>
 		</select>
+		<button id="create_period">创建新一期</button>
 		<span id="current_period"></span>
 	</div>
 	<div class="tool-bar">
@@ -62,7 +62,7 @@
 	<button id="submit" class="mt">提交</button>
 
 	<script type="text/html" id="static-opt">
-		<div class="subject-item">
+		<div class="subject-item new-subject">
 			<div class="title">
 				<label>标题: </label>
 				<textarea></textarea>
@@ -84,17 +84,42 @@
 	<script>	
 		$(function(){
 
-			$("#select").on("click",function(){
-				subject.add();
-			});	
-
 			var subject = {
 
 				wrap : $(".subject-list"),
 
 				optIndex : 0,
 
+				current_period : 0,
+
+				init : function(){
+
+					var self = this;
+
+					$("#select").on("click",function(){
+						self.add();
+					});	
+
+					$("#create_period").click(function(){
+						self.createPeriod();
+					});
+
+					$("#period").on("change",function(){
+						console.log(this.value)
+					})
+
+					$("#submit").on("click",function(){
+						console.log(self.submit())
+					})
+				},
+
 				add : function(){
+
+					if(!this.current_period){
+						alert("必须选择期数");
+						return;
+					}
+
 					var html = template("static-opt",{});
 					this.wrap[0].insertAdjacentHTML("beforeend",html);
 					
@@ -109,16 +134,71 @@
 				addOption : function(element,option){
 					var item = option.create();
 					$(element).next().append(item);
+				},
+
+				createPeriod : function(){
+					var num = $("#period option").length;
+					var html = "<option value="+ num +">第"+ num +"期</option>";
+					$("#period").prepend(html);
+					this.current_period = num;
+				},
+
+				submit : function(){
+
+					var newSub = $(".new-subject");
+					var models = {};
+					
+					$.each(newSub,function(i,e){
+
+						var title = $(e).find("textarea").val();
+
+						var option = "";
+						var all_opt = $(e).find(".option-list-item");
+						$.each(all_opt,function(k,v){
+							var value =  $(v).find("input").val();
+							if(value != ""){
+								option += value + "###";
+							}
+						})
+
+						var answer = $(e).find(".answer-item input").val();
+						
+						if(!!(title.trim()) && !!(option.trim()) && !!(answer.trim())){
+							models[i] = {};
+							models[i]["title"] = title;
+							models[i]["option"] = option;
+							models[i]["answer"] = answer;
+							models[i]["period"] = subject.current_period;
+						}
+						
+					});
+
+					// release
+
+					var data = {
+						list : JSON.stringify(models)
+					}
+
+					$.ajax({
+						url : '/subject/release',
+						data : data,
+						type : "POST",
+						success : function(){
+							//console.log(11)
+						}
+					})
+
 				}
 
 			}
 
-			//global
+			subject.init();
 
+
+			//global
 			var ABC = "ABCDEFGHIJK";
 
 			// 选项构造函数
-
 			function Option(){
 				this.index = 0;
 			}

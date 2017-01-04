@@ -114,12 +114,13 @@ def load_user(user_id):
 class Select(db.Model):
     __tablename__ = 'selects'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(256), unique=True)
-    option = db.Column(db.String(256), unique=True)
-    answer = db.Column(db.String(64), unique=True)
-    period = db.Column(db.Integer, default=255)
+    title = db.Column(db.String(256))
+    option = db.Column(db.String(256))
+    answer = db.Column(db.String(64))
+    period = db.Column(db.Integer)
     edited_time = db.Column(db.DateTime(), default=datetime.utcnow)
 
+    #Select.query.order_by(period)
 
     def __repr__(self):
         return '<Select %r>' % self.title
