@@ -120,7 +120,14 @@ class Select(db.Model):
     period = db.Column(db.Integer)
     edited_time = db.Column(db.DateTime(), default=datetime.utcnow)
 
-    #Select.query.order_by(period)
+    def get_max_period():
+        res = Select.query.order_by(db.desc(Select.period)).first()
+        if res is not None:
+            maxPeriod = res.period;
+        else:
+            maxPeriod = 0;
+        
+        return maxPeriod;
 
     def __repr__(self):
         return '<Select %r>' % self.title

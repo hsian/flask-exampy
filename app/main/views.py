@@ -21,8 +21,18 @@ def index():
 @login_required
 @admin_required
 def subject():
+	maxPeriod = Select.get_max_period()
+	return render_template('subject/edit.html',maxPeriod=maxPeriod,current_period=0)
 
-	return render_template('subject/edit.html')
+@main.route('/subject/<int:id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def show_subjects(id):
+
+	maxPeriod = Select.get_max_period()
+	selects = Select.query.filter_by(period=id)
+
+	return render_template('subject/edit.html',maxPeriod=maxPeriod,selects=selects,current_period=id)
 
 @main.route('/subject/release', methods=['GET', 'POST'])
 @login_required
@@ -39,4 +49,4 @@ def subject_release():
 		db.session.add(select)
 		db.session.commit()
 
-	return "11"
+	return "True"

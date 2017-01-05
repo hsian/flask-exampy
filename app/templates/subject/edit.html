@@ -23,12 +23,13 @@
 		}
 
 		.subject-item label{
-			width: 90px;
+			display: inline-block;
+			width: 60px;
 		}
 
 		.subject-item textarea{
 			width:300px;
-			height: 100px;
+			height: 50px;
 		}
 
 		.subject-item input{
@@ -57,7 +58,23 @@
 		添加: <button id="select">选择题</button> <button id="answer">问答题</button>
 	</div>
 	<div class="subject-list">
-		
+		{% for select in selects %}
+			<div class="subject-item">
+				<div class="title">
+					<label>标题: </label>
+					<textarea readonly>{{select.title}}</textarea>
+				</div>
+				<input type="hidden" value="{{select.option}}" class="subject-options">
+				<div class="option-list">
+					
+				</div>
+				<button class="add-option mt">添加选项</button>
+				<div class="answer-item mt">
+					<label>答案: </label>
+					<input type="text" name="answer" value="{{select.answer}}" readonly>
+				</div>
+			</div>
+		{% endfor %}
 	</div>
 	<button id="submit" class="mt">提交</button>
 
@@ -84,13 +101,18 @@
 	<script>	
 		$(function(){
 
+
+
+
 			var subject = {
 
 				wrap : $(".subject-list"),
 
 				optIndex : 0,
 
-				current_period : 0,
+				max_period : {{maxPeriod}},
+
+				current_period : {{current_period}},
 
 				init : function(){
 
@@ -105,12 +127,31 @@
 					});
 
 					$("#period").on("change",function(){
-						console.log(this.value)
+						var href = "/subject/" + this.value;
+						window.location.href = href;
 					})
 
 					$("#submit").on("click",function(){
-						console.log(self.submit())
+						self.submit();
 					})
+
+					//创建期数列表
+					this.optionList();
+				},
+
+				optionHtml : function(i){
+					i += 1;
+					return "<option value="+ i +">第"+ i +"期</option>";
+				},
+
+				optionList : function(){
+					var len = this.max_period;
+
+					var html = "";
+					for(var i = 0; i < len--;){
+						html += this.optionHtml(len);
+					}
+					$("#period").prepend(html);
 				},
 
 				add : function(){
@@ -136,17 +177,17 @@
 					$(element).next().append(item);
 				},
 
-				createPeriod : function(){
-					var num = $("#period option").length;
-					var html = "<option value="+ num +">第"+ num +"期</option>";
+				createPeriod : function(){	
+					this.max_period++;
+					var html = "<option value="+ this.max_period +">第"+ this.max_period +"期</option>";
 					$("#period").prepend(html);
-					this.current_period = num;
 				},
 
 				submit : function(){
-
+					
+					var self = this;
 					var newSub = $(".new-subject");
-					var models = {};
+					var models = {};					
 					
 					$.each(newSub,function(i,e){
 
@@ -184,7 +225,11 @@
 						data : data,
 						type : "POST",
 						success : function(){
-							//console.log(11)
+							self.wrap.empty();
+							window.location.reload();
+						},
+						error : function(){
+							alert("添加失败");
 						}
 					})
 
@@ -203,7 +248,7 @@
 				this.index = 0;
 			}
 
-			Option.prototype.create = function(){
+			Option.prototype.create = function(value){
 				var div = document.createElement("div");
 				var input = document.createElement("input");
 				var label = document.createElement("label");
@@ -211,12 +256,34 @@
 
 				div.className = "option-list-item";
 				label.innerHTML = current + ":";
+				input.value = value || "";
 
 				div.appendChild(label);
 				div.appendChild(input);
 		
 				return div;
 			}
+
+
+			var set_options = !function(){
+				
+				return (function(){
+
+					$.each($(".subject-options"),function(i,e){
+						
+						var arr = $(e).val().split("###");
+						var option = new Option();
+						$.each(arr,function(j,v){
+							if(v.trim() != ""){
+								var item = option.create(v);
+								$(item).find("input").attr("readonly","true");
+								$(e).next().append(item);
+							}	
+						})				
+					})
+
+				}());
+			}();
 
 		})
 	</script>
