@@ -42,6 +42,39 @@
 
 		.option-list-item label{
 			margin-right: 5px;
+			text-align: right;
+		}
+
+		.readonly input{
+			background: none;
+			border:none;
+		}
+		.readonly .add-option{
+			display: none;
+		}
+
+		.readonly textarea{
+			background: none;border:none; resize:none;
+			outline: none;
+		}
+		
+		.subject-item {
+			position: relative;
+		}
+
+		.edit_select{
+			position: absolute;
+			right: 10px;
+			top:5px;
+			font-size: 12px;
+		}
+
+		.edit_commit{
+			position: absolute;
+			right: 10px;
+			top:5px;
+			font-size: 12px;
+			display: none;
 		}
 	</style>
 </head>
@@ -59,7 +92,9 @@
 	</div>
 	<div class="subject-list">
 		{% for select in selects %}
-			<div class="subject-item">
+			<div class="subject-item readonly">
+				<a href="javacript:void(0)" data-id="{{select.id}}" class="edit_select">编辑</a>
+				<a href="javacript:void(0)" class="edit_commit">确认</a>
 				<div class="title">
 					<label>标题: </label>
 					<textarea readonly>{{select.title}}</textarea>
@@ -101,9 +136,6 @@
 	<script>	
 		$(function(){
 
-
-
-
 			var subject = {
 
 				wrap : $(".subject-list"),
@@ -133,6 +165,10 @@
 
 					$("#submit").on("click",function(){
 						self.submit();
+					})
+
+					$(".edit_select").on("click",function(){
+						self.edit(this);
 					})
 
 					//创建期数列表
@@ -181,6 +217,66 @@
 					this.max_period++;
 					var html = "<option value="+ this.max_period +">第"+ this.max_period +"期</option>";
 					$("#period").prepend(html);
+				},
+
+				edit : function(elem){
+
+					var self = this;
+					var id = $(elem).attr("data-id");
+					var commit = $(elem).next().show();
+					var parent = $(elem).hide().parent();
+					var item_len = parent.find(".option-list-item").length;
+					var option = new Option(item_len);
+
+					parent.removeClass("readonly");
+					parent.find("textarea").attr("readonly",false);
+					parent.find("input").attr("readonly",false);
+
+					parent.find(".add-option").click(function(){
+						var item = option.create();
+						$(this).prev().append(item);
+					})	
+
+					commit.click(function(){
+						self.editRelease(parent,id);
+					})
+				},
+
+				editRelease : function(elem,id){
+
+					var title = elem.find("textarea").val();
+					var option = "";
+					var all_opt = elem.find(".option-list-item");
+
+					$.each(all_opt,function(k,v){
+						var value =  $(v).find("input").val();
+						if(value != ""){
+							option += value + "###";
+						}
+					})
+
+					var answer = elem.find(".answer-item input").val();
+
+					if(!!(title.trim()) && !!(option.trim()) && !!(answer.trim())){
+						models = {};
+						models["title"] = title;
+						models["option"] = option;
+						models["answer"] = answer;
+					}
+
+					var data = {
+						list : JSON.stringify(models)
+					}
+
+					$.ajax({
+						url : "/edit_subject/" + id,
+						type : "POST",
+						data : data,
+						success : function(){
+							alert("编辑成功");
+							window.location.reload();
+						}
+					})
 				},
 
 				submit : function(){
@@ -244,8 +340,8 @@
 			var ABC = "ABCDEFGHIJK";
 
 			// 选项构造函数
-			function Option(){
-				this.index = 0;
+			function Option(index){
+				this.index = index || 0;
 			}
 
 			Option.prototype.create = function(value){

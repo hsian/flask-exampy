@@ -50,3 +50,19 @@ def subject_release():
 		db.session.commit()
 
 	return "True"
+
+@main.route('/edit_subject/<int:id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_subject(id):
+
+	select = Select.query.get_or_404(id)
+	data =  json.loads(request.form.get('list'))
+
+	select.title = data["title"]
+	select.answer = data["answer"]
+	select.option =  data["option"]
+
+	print(data)
+
+	return "True"
