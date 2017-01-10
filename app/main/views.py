@@ -4,11 +4,12 @@ from flask_login import login_required, current_user
 from . import main
 from ..auth import auth
 from .. import db
-from ..models import Role, User, Select
+from ..models import Role, User, Select, Score
 from ..decorators import admin_required, permission_required
 
 import json
 import base64
+import types 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():  
@@ -63,6 +64,66 @@ def edit_subject(id):
 	select.answer = data["answer"]
 	select.option =  data["option"]
 
-	print(data)
-
 	return "True"
+
+@main.route('/show_subject/<int:id>',methods=['GET','POST'])
+@login_required
+def show_subject(id):
+
+	selects = Select.query.filter_by(period=id)
+	first = "ABCDEFGHIJK"
+	index = 0
+	data = []
+
+	for n in selects:
+
+		index = index + 1
+		n.as_title = str(index) + ". " + n.title
+
+		arr = n.option.split("###")
+		for i in range(0,len(arr)):
+			if arr[i].strip() is not "":
+				arr[i] = first[i] + ". " + arr[i]
+		n.options = arr
+
+		if len(n.answer) >= 2:
+			n.isMulit = True
+		else:
+			n.isMulit = False
+
+		data.append(n) 
+				
+	return render_template('subject/list.html',selects=data,period=id)
+
+@main.route('/figure/<int:id>/<username>',methods=['GET','POST'])
+@login_required
+def figure_score(id,username):
+
+	data =  json.loads(request.form.get('list'))
+
+	if username == current_user.username:
+
+		exist = Score.query.filter_by(period=id,u_id=current_user.id).first()
+
+		if exist is None:
+			score = 0
+			selects = Select.query.filter_by(period=id)
+
+			for n in selects:
+				if data[str(n.id)] == n.answer:
+					score = score + 1
+
+			o_score = Score(u_id=current_user.id,
+				username=current_user.username,
+				score=score,
+				period=id)
+			db.session.add(o_score)
+			db.session.commit()
+
+			return str(score)
+		else:
+			return "不能重复提交"
+	else:
+		return "用户信息错误"
+
+

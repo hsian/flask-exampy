@@ -82,7 +82,7 @@ class User(UserMixin, db.Model):
     @staticmethod
     def insert_users():
 
-        users = ["chrome","firefox","IE","safari"]
+        users = current_app.config['ALLUSERS']
 
         for u in users:
             user = User(username=u,
@@ -99,9 +99,14 @@ class User(UserMixin, db.Model):
         db.session.commit()
 
     def set_local_ip(self,ip):
-        self.local_ip = ip;
-        db.session.add(self)
-        return True
+        exist = User.query.filter_by(local_ip=ip).first()
+
+        if exist is None:
+            self.local_ip = ip;
+            db.session.add(self)
+            return True
+        else:
+            return False
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -132,6 +137,16 @@ class Select(db.Model):
     def __repr__(self):
         return '<Select %r>' % self.title
 
+class Score(db.Model):
+    __tablename__ = "scores"
+    id = db.Column(db.Integer, primary_key=True)
+    u_id = db.Column(db.Integer)
+    username = db.Column(db.String(64), index=True)
+    score = db.Column(db.Integer)
+    period = db.Column(db.Integer)
+    
+    def __repr__(self):
+        return '<Score %r>' % self.username
 
 
 

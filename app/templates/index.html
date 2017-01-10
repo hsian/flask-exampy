@@ -6,11 +6,16 @@
 </head>
 <body>
 	
-	hello {{ current_user.username }}
+	hello {{ current_user.username }} <a href="/auth/logout">退出</a>
 
 	{% if current_user.is_administrator() %}
-        <p><a href="{{ url_for('main.subject') }}">题目管理</a></p>
+    <p><a href="{{ url_for('main.subject') }}">题目管理</a></p>
     {% endif %}
+
+
+    <p><a href="/show_subject/2">第二期</a></p>
+    
+
 
 </body>
 </html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>编辑题目</title>
+	<meta charset="utf-8">
+	<style>
+		*{
+			margin:0;
+			padding:0;
+		}
+
+		.wrap{
+			width:1000px;
+			margin:0 auto;
+			padding:30px 0;
+		}
+
+		.wrap h2{
+			text-align: center;
+			margin-bottom:20px;
+		}
+
+		ul{
+			list-style: none;
+		}
+
+		.subject-list li{
+			padding: 15px 0;
+			border-bottom: 1px #ddd solid;
+		}
+
+		.option-list p{
+			cursor:pointer;
+		}
+
+		.option-list p,.answer{
+			margin-top: 10px;
+			padding-left: 20px;
+		}
+
+		.answer span{
+			font-size: 20px;
+			color: red;
+			font-weight: bold;
+		}
+
+		#release{
+			width:50px;
+			height: 20px;
+			margin:20px;
+		}
+
+		#result{
+			color: red;
+			font-size: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<h2>题目列列表</h2>
+		
+		<ul class="subject-list">
+			{% for select in selects %}
+				<li>
+					<h4 class="title">{{select.as_title}} 
+						{% if select.isMulit == True %}
+							<span>(不定项)</span>
+						{% endif %}
+					</h4>
+					<div class="option-list">
+						{% for option in select.options %}
+							<p>{{option}}</p>
+						{% endfor %}
+					</div>
+					<p class="answer">答案: <span data-id="{{select.id}}" data-mulit="{{select.isMulit}}"></span></p>
+				</li>
+			{% endfor %}
+		</ul>
+
+		<button id="release">提交</button><span id="result"></span>
+	</div>
+
+	<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+	<script>
+
+		var oList = $(".option-list");
+		
+
+		oList.on("click","p",function(e){
+
+			var first = this.innerHTML[0];
+			var space = $(this).parent().next().find("span");
+			var isMulit = space.attr("data-mulit").toLowerCase();
+			var html;
+			
+			if(isMulit == "false"){
+				space.html(first);
+			}else{
+				if(space.html().indexOf(first) == -1){
+					html = space.html() + first;
+				}else{
+					html = space.html().replace(first,"");
+				}
+
+				html = html.split("").sort().join("").trim();
+
+				space.html(html);
+			}
+		});
+
+		$("#release").click(function(){
+
+			var result = {};
+
+			$.each($(".answer span"),function(i,e){
+
+				result[$(e).attr("data-id")] = $(e).html();
+			})
+
+			var data = {
+				list : JSON.stringify(result)
+			}
+			console.log(result)
+
+			$.ajax({
+				url : "/figure/{{period}}/{{current_user.username}}",
+				type : "POST",
+				data : data,
+				success : function(res){
+					if(res != "不能重复提交"){
+						res = "你答对了" + res + "题";
+					}
+					$("#result").html(res);
+				}
+			})
+
+		})
+
+	</script>
+</body>
+</html>

@@ -11,20 +11,38 @@ import socket
 def login():
 	form = LoginForm()
 	isEqual = 1
+	exist = False
 
 	## get local ip
-	localIP = socket.gethostbyname(socket.gethostname())
-
+	localIP = request.remote_addr
+	
 	if form.validate_on_submit():
 		user = User.query.filter_by(username=form.username.data).first()
 		if user is not None and user.verify_password(form.password.data):
 
-			if user.local_ip is None and User.set_local_ip(user,localIP) or \
-				localIP == user.local_ip:
+			# if user.local_ip is None and User.set_local_ip(user,localIP) or \
+			# 	localIP == user.local_ip:
+			# 	login_user(user, form.remember_me.data)
+			# 	return redirect(url_for('main.index'))
+			# elif localIP != user.local_ip:
+			# 	isEqual = 0
+			
+			if user.local_ip is None:
+				exist = User.set_local_ip(user,localIP)
+				
+			if exist or user.local_ip == localIP:
 				login_user(user, form.remember_me.data)
 				return redirect(url_for('main.index'))
-			elif localIP != user.local_ip:
+			else:
 				isEqual = 0
+
 		else:	
 			flash('Invalid username or password.')	
 	return render_template('auth/login.html', form=form,isEqual=isEqual)
+
+@auth.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.')
+    return redirect(url_for('main.index'))
