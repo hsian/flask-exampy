@@ -149,6 +149,42 @@ class Score(db.Model):
         return '<Score %r>' % self.username
 
 
+class Question(db.Model):
+    __tablename__ = "questions"
+    id = db.Column(db.Integer,primary_key=True)
+    title = db.Column(db.Text)
+    answer = db.Column(db.Text)
+    edited_time = db.Column(db.DateTime(), default=datetime.utcnow)
+    period = db.Column(db.Integer)
+
+    def get_max_period():
+        res = Question.query.order_by(db.desc(Question.period)).first()
+        if res is not None:
+            maxPeriod = res.period;
+        else:
+            maxPeriod = 0;
+        return maxPeriod;
+
+    def __repr__(self):
+        return '<Question %r>' % self.title
+
+class Answer(db.Model):
+    __tablename__ = "answers"
+    id = db.Column(db.Integer,primary_key=True)
+    period = db.Column(db.Integer)
+    quest_id = db.Column(db.Integer)
+    u_id = db.Column(db.Integer)
+    username = db.Column(db.String(64), index=True)
+    ans = db.Column(db.Text)
+
+    def __repr__(self):
+        return '<Answer %r>' % self.ans
+
+
+
+
+
+
 
 
 

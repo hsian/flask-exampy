@@ -54,29 +54,58 @@
 			color: red;
 			font-size: 20px;
 		}
+
+		.sub-title2{
+			margin: 20px 0;
+		}
+
+		.q_answer{
+			margin-top: 10px;
+		}
+
+		.q_answer textarea{
+			width:500px;
+			height: 60px;
+			padding:5px 10px;
+		}
 	</style>
 </head>
 <body>
 	<div class="wrap">
 		<h2>题目列列表</h2>
 		
+		<h4 class="sub-title">选择题</h4>
 		<ul class="subject-list">
 			{% for select in selects %}
-				<li>
-					<h4 class="title">{{select.as_title}} 
-						{% if select.isMulit == True %}
-							<span>(不定项)</span>
-						{% endif %}
-					</h4>
-					<div class="option-list">
-						{% for option in select.options %}
-							<p>{{option}}</p>
-						{% endfor %}
-					</div>
-					<p class="answer">答案: <span data-id="{{select.id}}" data-mulit="{{select.isMulit}}"></span></p>
-				</li>
+			<li>
+				<h4 class="title">{{select.as_title}} 
+					{% if select.isMulit == True %}
+						<span>(不定项)</span>
+					{% endif %}
+				</h4>
+				<div class="option-list">
+					{% for option in select.options %}
+						<p>{{option}}</p>
+					{% endfor %}
+				</div>
+				<p class="answer">答案: <span data-id="{{select.id}}" data-mulit="{{select.isMulit}}"></span></p>
+			</li>
 			{% endfor %}
 		</ul>
+
+		<h4 class="sub-title2">问答题</h4>
+		<div class="questions">
+			{% for question in questions %}
+			<div class="quest-item">
+				<h4 class="qust-title">
+					{{question.as_title}} 
+				</h4>
+				<div class="q_answer">
+					<textarea data-id="{{question.id}}"></textarea>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
 
 		<button id="release">提交</button><span id="result"></span>
 	</div>
@@ -86,7 +115,6 @@
 
 		var oList = $(".option-list");
 		
-
 		oList.on("click","p",function(e){
 
 			var first = this.innerHTML[0];
@@ -111,18 +139,15 @@
 
 		$("#release").click(function(){
 
+			/*//选择题提交
 			var result = {};
 
 			$.each($(".answer span"),function(i,e){
-
 				result[$(e).attr("data-id")] = $(e).html();
 			})
-
 			var data = {
 				list : JSON.stringify(result)
 			}
-			console.log(result)
-
 			$.ajax({
 				url : "/figure/{{period}}/{{current_user.username}}",
 				type : "POST",
@@ -132,6 +157,30 @@
 						res = "你答对了" + res + "题";
 					}
 					$("#result").html(res);
+				}
+			})*/
+
+			//问答题
+			var q_res = {};
+
+			$.each($(".q_answer textarea"),function(i,e){
+				q_res[$(e).attr("data-id")] = $(e).val();
+			})
+
+			var data = {
+				list : JSON.stringify(q_res)
+			}
+
+	
+
+			$.ajax({
+				url : "/figure_quest/{{period}}/{{current_user.username}}",
+				type : "POST",
+				data : data,
+				success : function(res){
+					if(res != "不能重复提交"){
+						res = "你答对了" + res + "题";
+					}
 				}
 			})
 

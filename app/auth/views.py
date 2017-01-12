@@ -25,12 +25,13 @@ def login():
 			# 	login_user(user, form.remember_me.data)
 			# 	return redirect(url_for('main.index'))
 			# elif localIP != user.local_ip:
-			# 	isEqual = 0
+			# 	isEqual = 0                            
 			
 			if user.local_ip is None:
 				exist = User.set_local_ip(user,localIP)
-				
-			if exist or user.local_ip == localIP:
+			
+
+			if exist or user.local_ip == localIP or User.is_administrator(user):
 				login_user(user, form.remember_me.data)
 				return redirect(url_for('main.index'))
 			else:

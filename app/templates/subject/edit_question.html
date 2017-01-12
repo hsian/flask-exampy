@@ -12,77 +12,8 @@
 			margin:10px 0;
 		}
 
-		.subject-item{
-			border-bottom: 1px #ddd solid;
-			padding:10px;
-			background: #f5f5f5;
-		}
-
-		.subject-item .title *{
-			vertical-align: top;
-		}
-
-		.subject-item label{
-			display: inline-block;
-			width: 60px;
-		}
-
-		.subject-item textarea{
-			width:500px;
-			height: 60px;
-		}
-
-		.subject-item input{
-			width: 300px;
-		}
-
-		.option-list input{
-			margin-top: 10px;
-		}
-
-		.option-list-item label{
-			margin-right: 5px;
-			text-align: right;
-		}
-
-		.readonly input{
-			background: none;
-			border:none;
-		}
-		.readonly .add-option{
-			display: none;
-		}
-
-		.readonly textarea{
-			background: none;border:none; resize:none;
-			outline: none;
-		}
-
-		.title *{
-			vertical-align: top;
-		}
-		
-		.subject-item {
-			position: relative;
-		}
-
-		.edit_select{
-			position: absolute;
-			right: 10px;
-			top:5px;
-			font-size: 12px;
-		}
-
-		.edit_commit{
-			position: absolute;
-			right: 10px;
-			top:5px;
-			font-size: 12px;
-			display: none;
-		}
-
-		#question{
-			margin-left: 20px;
+		#select{
+			margin-right: 20px;
 		}
 	</style>
 </head>
@@ -92,50 +23,16 @@
 		<select id="period">
 			<option>选择期数</option>
 		</select>
-		<button id="create_period">创建新一期</button>
-		<span id="current_period">第 {{current_period}} 期</span>
+		<span id="current_period"></span>
 	</div>
 	<div class="tool-bar">
-		添加: <button id="select">选择题</button><a id="question" href="/question/{{current_period}}">问答题</a>
+		添加: <a id="select" href="/subject">选择题</a> <button id="question">问答题</button>
 	</div>
-	<div class="subject-list">
-		{% for select in selects %}
-			<div class="subject-item readonly">
-				<a href="javacript:void(0)" data-id="{{select.id}}" class="edit_select">编辑</a>
-				<a href="javacript:void(0)" class="edit_commit">确认</a>
-				<div class="title">
-					<label>标题: </label>
-					<textarea readonly>{{select.title}}</textarea>
-				</div>
-				<input type="hidden" value="{{select.option}}" class="subject-options">
-				<div class="option-list">
-					
-				</div>
-				<button class="add-option mt">添加选项</button>
-				<div class="answer-item mt">
-					<label>答案: </label>
-					<input type="text" name="answer" value="{{select.answer}}" readonly>
-				</div>
-			</div>
-		{% endfor %}
-	</div>
+
 	<button id="submit" class="mt">提交</button>
 
 	<script type="text/html" id="static-opt">
-		<div class="subject-item new-subject">
-			<div class="title">
-				<label>标题: </label>
-				<textarea></textarea>
-			</div>
-			<button class="add-option mt">添加选项</button>
-			<div class="option-list">
-				
-			</div>
-			<div class="answer-item mt">
-				<label>答案: </label>
-				<input type="text" name="answer">
-			</div>
-		</div>
+
 	</script>
 
 	<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
@@ -329,6 +226,7 @@
 						data : data,
 						type : "POST",
 						success : function(){
+							self.wrap.empty();
 							window.location.reload();
 						},
 						error : function(){

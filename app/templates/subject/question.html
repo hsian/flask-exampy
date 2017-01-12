@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>编辑题目</title>
+	<meta charset="utf-8">
+	<style>
+		.mt{
+			margin-top: 10px;
+		}
+
+		.tool-bar{
+			margin:10px 0;
+		}
+
+		#select{
+			margin-right: 20px;
+		}
+
+		.readonly textarea{
+			background: none;border:none;
+			outline: none;
+		}
+
+		.subject-item{
+			border-bottom: 1px #ddd solid;
+			padding:10px;
+			background: #f5f5f5;
+		}
+
+		.subject-item textarea{
+			width:500px;
+			height: 60px;
+		}
+
+		.title *{
+			vertical-align: top;
+		}
+
+		.subject-item {
+			position: relative;
+		}
+
+		.edit_select{
+			position: absolute;
+			right: 10px;
+			top:5px;
+			font-size: 12px;
+		}
+
+		.edit_commit{
+			position: absolute;
+			right: 10px;
+			top:5px;
+			font-size: 12px;
+			display: none;
+		}
+
+	</style>
+</head>
+<body>
+
+	<div>
+		<select id="period">
+			<option>选择期数</option>
+		</select>
+		<span id="current_period">第 {{current_period}} 期</span>
+	</div>
+	<div class="tool-bar">
+		添加: <a id="select" href="/subject">选择题</a> <button id="question">问答题</button>
+	</div>
+
+	<div class="subject-list">
+		{% for question in questions %}
+			<div class="subject-item readonly">
+				<a href="javacript:void(0)" data-id="{{question.id}}" class="edit_select">编辑</a>
+				<a href="javacript:void(0)" class="edit_commit">确认</a>
+				<div class="title">
+					<label>标题: </label>
+					<textarea readonly>{{question.title}}</textarea>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+	<button id="submit" class="mt">提交</button>
+
+	<script type="text/html" id="static-quest">
+		<div class="subject-item new-subject">
+			<div class="title">
+				<label>标题: </label>
+				<textarea></textarea>
+			</div>
+		</div>
+	</script>
+
+	<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/template.js') }}"></script>
+
+	<script>	
+	
+	$(function(){
+		var Quest = {
+
+			wrap : $(".subject-list"),
+			max_period : {{maxPeriod}},
+			current_period : {{current_period}},
+
+			init : function(){
+				//创建期数列表
+				this.optionList();
+
+				//选择期数 
+				$("#period").on("change",function(){
+					var href = "/question/" + this.value;
+					window.location.href = href;
+				})
+
+				//添加题目
+				$("#question").on("click",function(){
+					Quest.add();
+				});	
+
+				//提交
+				$("#submit").on("click",function(){
+					Quest.submit();
+				})
+
+				//编辑
+				$(".edit_select").on("click",function(){
+					Quest.edit(this);
+				})
+			},
+
+			optionList : function(){
+				var len = this.max_period;
+
+				var html = "";
+				for(var i = 0; i < len--;){
+					html += this.optionHtml(len);
+				}
+				$("#period").prepend(html);
+			},
+
+			optionHtml : function(i){
+				i += 1;
+				return "<option value="+ i +">第"+ i +"期</option>";
+			},
+
+			add : function(){
+
+				if(!this.current_period){
+					alert("必须选择期数");
+					return;
+				}
+
+				var html = template("static-quest",{});
+				this.wrap[0].insertAdjacentHTML("beforeend",html);			
+			},
+
+			edit : function(elem){
+
+				var self = this;
+				var id = $(elem).attr("data-id");
+				var commit = $(elem).next().show();
+				var parent = $(elem).hide().parent();
+
+				parent.removeClass("readonly");
+				parent.find("textarea").attr("readonly",false);	
+
+				commit.click(function(){
+					self.editRelease(parent,id);
+				})
+			},
+
+			editRelease : function(elem,id){
+
+				var title = elem.find("textarea").val();
+
+				if(!!(title.trim())){
+					models = {};
+					models["title"] = title;
+				}
+
+				var data = {
+					list : JSON.stringify(models)
+				}
+
+				$.ajax({
+					url : "/edit_question/" + id,
+					type : "POST",
+					data : data,
+					success : function(){
+						alert("编辑成功");
+						window.location.reload();
+					}
+				})
+			},
+
+			submit : function(){
+					
+				var self = this;
+				var newSub = $(".new-subject");
+				var models = {};					
+				
+				$.each(newSub,function(i,e){
+
+					var title = $(e).find("textarea").val();
+
+					if(!!(title.trim())){
+						models[i] = {};
+						models[i]["title"] = title;
+						models[i]["period"] = Quest.current_period;
+					}
+					
+				});
+
+				// release data
+				var data = {
+					list : JSON.stringify(models)
+				}
+
+				$.ajax({
+					url : '/question/release',
+					data : data,
+					type : "POST",
+					success : function(){
+						window.location.reload();
+					},
+					error : function(){
+						alert("添加失败");
+					}
+				})
+
+			}
+
+		}
+
+		Quest.init();
+	})
+
+	</script>
+	
+
+</body>
+</html>
