@@ -19,14 +19,12 @@ def index():
 
 
 @main.route('/subject', methods=['GET', 'POST'])
-@login_required
 @admin_required
 def subject():
 	maxPeriod = Select.get_max_period()
 	return render_template('subject/edit.html',maxPeriod=maxPeriod,current_period=0)
 
 @main.route('/subject/<int:id>', methods=['GET', 'POST'])
-@login_required
 @admin_required
 def show_subjects(id):
 
@@ -36,7 +34,6 @@ def show_subjects(id):
 	return render_template('subject/edit.html',maxPeriod=maxPeriod,selects=selects,current_period=id)
 
 @main.route('/subject/release', methods=['GET', 'POST'])
-@login_required
 @admin_required
 def subject_release():
 
@@ -53,7 +50,6 @@ def subject_release():
 	return "True"
 
 @main.route('/edit_subject/<int:id>', methods=['GET', 'POST'])
-@login_required
 @admin_required
 def edit_subject(id):
 
@@ -193,6 +189,17 @@ def edit_question(id):
 
 	question.title = data["title"]
 	return "True"
+
+
+@main.route('/show_question/<int:id>',methods=['GET','POST'])
+@login_required
+@admin_required
+def show_question(id):
+
+	quests = Question.query.filter_by(period=id).all()
+	#answers = Question.query.filter_by(period=id).all()
+	
+	return render_template('subject/questions.html',quests=quests)
 
 
 

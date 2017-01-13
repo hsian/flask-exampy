@@ -68,6 +68,14 @@
 			height: 60px;
 			padding:5px 10px;
 		}
+
+		.quest-item{
+			margin-top: 10px;
+		}
+
+		.q_answer *{
+			vertical-align: top;
+		}
 	</style>
 </head>
 <body>
@@ -101,7 +109,7 @@
 					{{question.as_title}} 
 				</h4>
 				<div class="q_answer">
-					<textarea data-id="{{question.id}}"></textarea>
+					<label>回答：</label><textarea data-id="{{question.id}}"></textarea>
 				</div>
 			</div>
 			{% endfor %}
@@ -139,7 +147,7 @@
 
 		$("#release").click(function(){
 
-			/*//选择题提交
+			//选择题提交
 			var result = {};
 
 			$.each($(".answer span"),function(i,e){
@@ -158,7 +166,7 @@
 					}
 					$("#result").html(res);
 				}
-			})*/
+			})
 
 			//问答题
 			var q_res = {};
@@ -170,8 +178,6 @@
 			var data = {
 				list : JSON.stringify(q_res)
 			}
-
-	
 
 			$.ajax({
 				url : "/figure_quest/{{period}}/{{current_user.username}}",

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>编辑题目</title>
+	<meta charset="utf-8">
+	<style>
+		.mt{
+			margin-top: 10px;
+		}
+
+		
+	</style>
+</head>
+<body>
+
+	<div>
+		<select id="period">
+			<option>选择期数</option>
+		</select>
+		<span id="current_period">第 {{current_period}} 期</span>
+	</div>
+	
+	<div class="ans-list">
+	{% for quest in quests %}
+		<h4>问题：{{quest.title}}</h4>
+		{% for answer in quest.answers %}
+			<p>{{answer.username}}: <code>{{answer.ans}}</code></p>
+		{% endfor %}
+	{% endfor %}	
+	</div>
+	
+
+</body>
+</html>

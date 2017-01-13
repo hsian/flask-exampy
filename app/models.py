@@ -156,6 +156,7 @@ class Question(db.Model):
     answer = db.Column(db.Text)
     edited_time = db.Column(db.DateTime(), default=datetime.utcnow)
     period = db.Column(db.Integer)
+    answers = db.relationship('Answer', backref='quest', lazy='dynamic')
 
     def get_max_period():
         res = Question.query.order_by(db.desc(Question.period)).first()
@@ -172,7 +173,7 @@ class Answer(db.Model):
     __tablename__ = "answers"
     id = db.Column(db.Integer,primary_key=True)
     period = db.Column(db.Integer)
-    quest_id = db.Column(db.Integer)
+    quest_id = db.Column(db.Integer,db.ForeignKey('questions.id'))
     u_id = db.Column(db.Integer)
     username = db.Column(db.String(64), index=True)
     ans = db.Column(db.Text)
