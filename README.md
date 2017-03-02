@@ -1,6 +1,6 @@
 #exampy 考试系统 
 
-  python-flask 实现的考试系统,可以创建多期题目,题目分为选择题和问答题,
+  python-flask + sqlite 实现的考试系统,可以创建多期题目,题目分为选择题和问答题,
   
   选择题提交答案后可直接匹配答案,问答题在后台预览每道题每个人的回答,
   
@@ -8,7 +8,7 @@
   
 ##开发环境和依赖
  
- 本项目开发环境了win7 其他环境自行查找相关安装方法 区别都不大,因为win下是最难的T^T;
+ 本项目开发环境是win7 其他环境自行查找相关安装方法 区别都不大,因为win下是最难的T^T;
  
   
 ##step
@@ -33,7 +33,7 @@
   
   3. run server `python manage.py runserver` or 'python tornado_server.py`
   
-开发使用 python manage.py runserver ,管理员用户名:hsian, 密码:123456; <详见配置文件 config.py>
+开发使用 python manage.py runserver ,管理员用户名:admin, 密码:123456; <详见配置文件 config.py>
   
   
   
