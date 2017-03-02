@@ -17,7 +17,14 @@
   
   2. `pip install virtualenv`
   
-  3.
+  3. create new folder `exam`
+
+  4. `cd exam` and `git clone https://github.com/hsian/exampy.git`
+  
+  5. `cd exampy` create virtualenv `virtualenv venv` and switch to `venv\scripts\activate`
+  
+  6. installation dependency `pip install -r requirements.txt`
+  
   
   
   
