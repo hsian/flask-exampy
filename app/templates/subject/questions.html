@@ -1,13 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>编辑题目</title>
+	<title>回答列表</title>
 	<meta charset="utf-8">
 	<style>
 		.mt{
 			margin-top: 10px;
 		}
 
+		.ans-list p:hover{
+			background: #f5f5f5;
+		}
+
+		.ans-list p span{
+			float: left;
+			display: block;
+			width:100px;
+		}
+
+		.ans-list p:after{
+			display: block;
+			content: "";
+			height: 0;
+			overflow: hidden;
+			clear: both;
+		}
+
+		.ans-list p code{
+			padding-left: 20px;
+			float: left;
+			line-height: 22px;
+		}
 		
 	</style>
 </head>
@@ -22,9 +45,9 @@
 	
 	<div class="ans-list">
 	{% for quest in quests %}
-		<h4>问题：{{quest.title}}</h4>
+		<h4>问题：{{quest.title|safe}}</h4>
 		{% for answer in quest.answers %}
-			<p>{{answer.username}}: <code>{{answer.ans}}</code></p>
+			<p><span>{{answer.username}}:</span> <code>{{answer.ans | safe}}</code></p>
 		{% endfor %}
 	{% endfor %}	
 	</div>

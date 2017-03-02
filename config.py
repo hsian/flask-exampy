@@ -21,14 +21,14 @@ class Config:
     "傅阳光",
     "余得水",
     "陈昌斌",
-    "黎家俊",
+    "黎嘉俊",
     "杨胜珍",
     "刘德鑫",
     "涂凡",
     "叶小生",
     "黎鹏飞",
     "刘蔚峰",
-    "黄何瑞",
+    "黄和瑞",
     "测试"]
 
 
@@ -42,6 +42,7 @@ class DevelopmentConfig(Config):
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 class ProductionConfig(Config):
+    DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 

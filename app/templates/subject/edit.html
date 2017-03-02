@@ -3,13 +3,27 @@
 <head>
 	<title>编辑题目</title>
 	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 	<style>
+		body{
+			width:1000px;
+			margin: 20px auto;
+		}
+
 		.mt{
 			margin-top: 10px;
 		}
 
 		.tool-bar{
 			margin:10px 0;
+		}
+
+		#period{
+			display: inline-block; width: 150px;
+		}
+
+		#create_period{
+			margin:0 10px;
 		}
 
 		.subject-item{
@@ -29,7 +43,6 @@
 
 		.subject-item textarea{
 			width:500px;
-			height: 60px;
 		}
 
 		.subject-item input{
@@ -89,14 +102,14 @@
 <body>
 
 	<div>
-		<select id="period">
+		<select id="period" class="form-control">
 			<option>选择期数</option>
 		</select>
-		<button id="create_period">创建新一期</button>
+		<button id="create_period" class="btn btn-default">创建新一期</button>
 		<span id="current_period">第 {{current_period}} 期</span>
 	</div>
 	<div class="tool-bar">
-		添加: <button id="select">选择题</button><a id="question" href="/question/{{current_period}}">问答题</a>
+		添加: <button id="select" class="btn btn-primary">选择题</button><a id="question" href="/question/{{current_period}}">问答题</a>
 	</div>
 	<div class="subject-list">
 		{% for select in selects %}
@@ -105,13 +118,13 @@
 				<a href="javacript:void(0)" class="edit_commit">确认</a>
 				<div class="title">
 					<label>标题: </label>
-					<textarea readonly>{{select.title}}</textarea>
+					<textarea readonly rows="3">{{select.title}}</textarea>
 				</div>
 				<input type="hidden" value="{{select.option}}" class="subject-options">
 				<div class="option-list">
 					
 				</div>
-				<button class="add-option mt">添加选项</button>
+				<button class="add-option mt btn btn-primary btn-sm" >添加选项</button>
 				<div class="answer-item mt">
 					<label>答案: </label>
 					<input type="text" name="answer" value="{{select.answer}}" readonly>
@@ -252,7 +265,7 @@
 
 				editRelease : function(elem,id){
 
-					var title = elem.find("textarea").val();
+					var title = elem.find("textarea").val().replace(/\n/g,"<br>");
 					var option = "";
 					var all_opt = elem.find(".option-list-item");
 

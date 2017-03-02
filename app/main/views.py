@@ -66,6 +66,9 @@ def edit_subject(id):
 @login_required
 def show_subject(id):
 
+	# if id is not 2:
+	# 	return "error"
+
 	selects = Select.query.filter_by(period=id)
 	first = "ABCDEFGHIJK"
 	index = 0
@@ -198,7 +201,7 @@ def show_question(id):
 
 	quests = Question.query.filter_by(period=id).all()
 	#answers = Question.query.filter_by(period=id).all()
-	
+	print(quests)
 	return render_template('subject/questions.html',quests=quests)
 
 

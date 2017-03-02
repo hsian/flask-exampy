@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>编辑题目</title>
+	<title>试题列表</title>
 	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 	<style>
 		*{
 			margin:0;
 			padding:0;
 		}
 
+		body{
+			font-family: "Microsoft YaHei";
+		}
+
 		.wrap{
 			width:1000px;
 			margin:0 auto;
-			padding:30px 0;
+			padding:20px 0;
 		}
 
 		.wrap h2{
@@ -24,13 +29,17 @@
 			list-style: none;
 		}
 
+		.subject-list .title{
+			margin-top: 15px;
+		}
+
 		.subject-list li{
-			padding: 15px 0;
 			border-bottom: 1px #ddd solid;
 		}
 
 		.option-list p{
 			cursor:pointer;
+			color:#5c5c5c;
 		}
 
 		.option-list p,.answer{
@@ -41,18 +50,12 @@
 		.answer span{
 			font-size: 20px;
 			color: red;
-			font-weight: bold;
-		}
-
-		#release{
-			width:50px;
-			height: 20px;
-			margin:20px;
 		}
 
 		#result{
 			color: red;
-			font-size: 20px;
+			font-size: 14px;
+			margin-left: 10px;
 		}
 
 		.sub-title2{
@@ -65,28 +68,42 @@
 
 		.q_answer textarea{
 			width:500px;
-			height: 60px;
-			padding:5px 10px;
 		}
 
 		.quest-item{
 			margin-top: 10px;
 		}
 
-		.q_answer *{
-			vertical-align: top;
+		.q_answer:after{
+			display: block;
+			content:" ";
+			height: 0;
+			overflow: hidden;
+			clear:both;
+		}
+
+		.q_answer p,.q_answer textarea{
+			float: left;
+		}
+
+		#release{
+			margin: 20px auto;
+		}
+
+		.qust-title{
+			line-height: 24px;
 		}
 	</style>
 </head>
 <body>
 	<div class="wrap">
-		<h2>题目列列表</h2>
+		<h2>试题列表</h2>
 		
-		<h4 class="sub-title">选择题</h4>
+		<h3>选择题 <span style="color:#636363; font-size:16px;">(每道3分)</span></h3>
 		<ul class="subject-list">
 			{% for select in selects %}
 			<li>
-				<h4 class="title">{{select.as_title}} 
+				<h4 class="title">{{select.as_title | safe}} 
 					{% if select.isMulit == True %}
 						<span>(不定项)</span>
 					{% endif %}
@@ -101,21 +118,21 @@
 			{% endfor %}
 		</ul>
 
-		<h4 class="sub-title2">问答题</h4>
+		<h3 class="sub-title2">问答题 <span style="color:#636363; font-size:16px;">(1-7每道5分 第8道10分)</span></h3>
 		<div class="questions">
 			{% for question in questions %}
 			<div class="quest-item">
 				<h4 class="qust-title">
-					{{question.as_title}} 
+					{{question.as_title | safe}} 
 				</h4>
 				<div class="q_answer">
-					<label>回答：</label><textarea data-id="{{question.id}}"></textarea>
+					<p>回答：</p><textarea  class="form-control" rows="3" data-id="{{question.id}}"></textarea>
 				</div>
 			</div>
 			{% endfor %}
 		</div>
 
-		<button id="release">提交</button><span id="result"></span>
+		<button id="release" class="btn btn-primary">提 交</button><span id="result"></span>
 	</div>
 
 	<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
@@ -147,6 +164,12 @@
 
 		$("#release").click(function(){
 
+			var isRelease = window.confirm("提交后无法修改，不能重复提交！确定提交吗？")
+
+			if(!isRelease){
+				return false;
+			}
+
 			//选择题提交
 			var result = {};
 
@@ -164,7 +187,10 @@
 					if(res != "不能重复提交"){
 						res = "你答对了" + res + "题";
 					}
+
 					$("#result").html(res);
+
+					alert(res);
 				}
 			})
 
@@ -172,7 +198,7 @@
 			var q_res = {};
 
 			$.each($(".q_answer textarea"),function(i,e){
-				q_res[$(e).attr("data-id")] = $(e).val();
+				q_res[$(e).attr("data-id")] = $(e).val().replace(/\n/g,"<br>");
 			})
 
 			var data = {
@@ -184,9 +210,7 @@
 				type : "POST",
 				data : data,
 				success : function(res){
-					if(res != "不能重复提交"){
-						res = "你答对了" + res + "题";
-					}
+					//console.log(res);
 				}
 			})
 

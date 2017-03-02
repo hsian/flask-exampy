@@ -3,19 +3,28 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+	<style type="text/css">
+		.wrap{
+			width:1000px;
+			margin:0 auto;
+		}
+
+		.wrap h1 a{
+			font-size: 16px;
+		}
+	</style>
 </head>
 <body>
-	
-	hello {{ current_user.username }} <a href="/auth/logout">退出</a>
+	<div class="wrap">
+		<h1>hello {{ current_user.username }} <a href="/auth/logout">退出</a></h1>
 
-	{% if current_user.is_administrator() %}
-    <p><a href="{{ url_for('main.subject') }}">题目管理</a></p>
-    {% endif %}
-
-
-    <p><a href="/show_subject/2">第二期</a></p>
-    
+		{% if current_user.is_administrator() %}
+	    <h2><a href="{{ url_for('main.subject') }}">题目管理</a></h2>
+	    {% endif %}
 
 
+	    <h2><a href="/show_subject/3">试题列表</a></h2>
+    </div>
 </body>
 </html>

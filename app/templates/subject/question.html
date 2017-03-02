@@ -174,7 +174,7 @@
 
 			editRelease : function(elem,id){
 
-				var title = elem.find("textarea").val();
+				var title = elem.find("textarea").val().replace(/\n/g,"<br>");
 
 				if(!!(title.trim())){
 					models = {};

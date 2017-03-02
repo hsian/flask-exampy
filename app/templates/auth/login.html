@@ -3,27 +3,34 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 	<style type="text/css">
 		.form-group,.checkbox {
 			margin-bottom: 10px;
 		}
+
+		.box{
+			width:500px;
+			margin:0 auto;
+		}
 	</style>
 </head>
 <body>
-	{% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{ message }}
-    </div>
-    {% endfor %}
+	<div class="box">
+		{% for message in get_flashed_messages() %}
+	    <div class="alert alert-warning">
+	        <button type="button" class="close" data-dismiss="alert">&times;</button>
+	        {{ message }}
+	    </div>
+	    {% endfor %}
 
-	{% import "bootstrap/wtf.html" as wtf %}
-	<div class="page-header">
-	    <h1>Login</h1>
+		{% import "bootstrap/wtf.html" as wtf %}
+		<div class="page-header">
+		    <h1>Login</h1>
+		</div>
+
+		{{ wtf.quick_form(form) }}
 	</div>
-
-	{{ wtf.quick_form(form) }}
-
 
 	<script type="text/javascript">
 		if(+{{ isEqual }} == 0){
