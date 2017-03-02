@@ -6,30 +6,10 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_RECORD_QUERIES = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    FLASKY_ADMIN = "hsian"
+    FLASKY_ADMIN = "admin"
     FLASKY_ADMIN_PASSWORD = "123456"
 
-    ALLUSERS = [
-    "石田野",
-    "蒋增东",
-    "王达枝",
-    "曾令平",
-    "王润华",
-    "龙旭智",
-    "何海深",
-    "余航",
-    "傅阳光",
-    "余得水",
-    "陈昌斌",
-    "黎嘉俊",
-    "杨胜珍",
-    "刘德鑫",
-    "涂凡",
-    "叶小生",
-    "黎鹏飞",
-    "刘蔚峰",
-    "黄和瑞",
-    "测试"]
+    ALLUSERS = ["测试1","测试2","测试3"]
 
 
     @staticmethod
