@@ -1,8 +1,6 @@
-#exam-py
+#exampy 考试系统 
 
-##考试系统 
-
-  一套python实现的考试系统,可以创建多期题目,题目分为选择题和问答题,
+  python-flask 实现的考试系统,可以创建多期题目,题目分为选择题和问答题,
   
   选择题提交答案后可直接匹配答案,问答题在后台预览每道题每个人的回答,
   
@@ -33,7 +31,7 @@
   
   2. insert data `python manage.py deploy`
   
-  3. run server `python manage.py runserver` or 'python tornado_server.py`
+  3. run server `python manage.py runserver` or 'python tornado_server.py`
   
 开发使用 python manage.py runserver ,管理员用户名:hsian, 密码:123456; <详见配置文件 config.py>
   
