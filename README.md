@@ -1,4 +1,4 @@
-#exampy 考试系统 
+# exampy 考试系统 
 
   python-flask + sqlite 实现的考试系统,可以创建多期题目,题目分为选择题和问答题,
   
@@ -6,12 +6,12 @@
   
   每个人的登录名和当前ip绑定,禁止多次登录;
   
-##开发环境和依赖
+## 开发环境和依赖
  
  本项目开发环境是win7 其他环境自行查找相关安装方法 区别都不大,因为win下是最难的T^T;
  
   
-##step
+## step
 
   1. install python3.x <a href="https://www.python.org/downloads/">https://www.python.org/downloads/</a>
   
@@ -25,7 +25,7 @@
   
   6. installation dependency `pip install -r requirements.txt`
   
-##deploy
+## deploy
 
   1. initialization db `python manage.py db init` `python manage.py db migrate` `python manage.py db upgrade`
   
